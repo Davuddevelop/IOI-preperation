@@ -1,15 +1,27 @@
-import { useId, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { Children, useId, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import { cx } from '../lib/cx'
 import { Icon, type IconName } from './Icon'
 import styles from './ui.module.css'
 
-/** Colour roles from tokens.css; a component sets data-tone and its CSS reads --tone. */
-export type Tone = 'accent' | 'drone' | 'metal' | 'warn' | 'danger' | 'neutral'
+/**
+ * The four signal roles from tokens.css. A component sets data-tone and its
+ * CSS reads var(--tone). Normal state is 'neutral' — most things should be.
+ */
+export type Tone = 'neutral' | 'friendly' | 'warn' | 'danger'
+
+/**
+ * Every signal colour comes with a shape, borrowed from military map
+ * symbology: circle = ours, triangle = caution, diamond = danger. The
+ * pairing keeps meaning intact for colour-blind operators and in grayscale.
+ */
+export function Glyph({ tone }: { tone: Tone }) {
+  if (tone === 'neutral') return null
+  return <span className={styles.glyph} data-tone={tone} aria-hidden="true" />
+}
 
 interface PanelProps {
   title: string
-  icon?: IconName
-  /** Small element beside the title, such as a badge. */
+  /** Quiet text beside the title. */
   tag?: ReactNode
   actions?: ReactNode
   children: ReactNode
@@ -19,16 +31,15 @@ interface PanelProps {
   flush?: boolean
 }
 
-export function Panel({ title, icon, tag, actions, children, className, bodyClassName, flush }: PanelProps) {
+export function Panel({ title, tag, actions, children, className, bodyClassName, flush }: PanelProps) {
   const id = useId()
   return (
     <section className={cx(styles.panel, className)} aria-labelledby={id}>
       <header className={styles.panelHeader}>
-        {icon && <Icon name={icon} size={16} className={styles.panelIcon} />}
         <h2 id={id} className={styles.panelTitle}>
           {title}
         </h2>
-        {tag}
+        {tag && <span className={styles.panelTag}>{tag}</span>}
         {actions && <div className={styles.panelActions}>{actions}</div>}
       </header>
       <div className={cx(styles.panelBody, flush && styles.flush, bodyClassName)}>{children}</div>
@@ -40,6 +51,7 @@ interface StatProps {
   label: string
   value: ReactNode
   unit?: string
+  /** Leave unset for normal values; colour is for values that need attention. */
   tone?: Tone
   hint?: ReactNode
 }
@@ -53,6 +65,7 @@ export function Stat({ label, value, unit, tone, hint }: StatProps) {
     <div className={styles.stat} data-tone={tone}>
       <span className="label">{label}</span>
       <span className={cx(numeric && 'mono', styles.statValue)}>
+        {tone && <Glyph tone={tone} />}
         {value}
         {unit && <span className={styles.statUnit}>{unit}</span>}
       </span>
@@ -61,27 +74,71 @@ export function Stat({ label, value, unit, tone, hint }: StatProps) {
   )
 }
 
-/** Horizontal level bar. Picks its colour from the value unless a tone is given. */
-export function Meter({ value, label, tone }: { value: number; label: string; tone?: Tone }) {
-  const auto: Tone = value < 15 ? 'danger' : value < 30 ? 'warn' : 'accent'
+/**
+ * Stats laid out as a hairline table. The rules between cells are 1px gaps
+ * over a line-coloured background, so there are no boxes inside boxes.
+ * Two columns, or four once the container is wide enough; keep the number of
+ * children even so no cell is left empty.
+ */
+export function StatGrid({ children, columns = 2 }: { children: ReactNode; columns?: 2 | 3 }) {
+  return (
+    // The wrapper is the size container: a container query cannot react to the element it styles.
+    <div className={styles.statGridWrap}>
+      <div className={styles.statGrid} data-columns={columns}>
+        {Children.map(children, (child) => child && <div className={styles.statCell}>{child}</div>)}
+      </div>
+    </div>
+  )
+}
+
+interface MeterProps {
+  /** 0–100. */
+  value: number
+  label: string
+  /** Below this the bar turns amber. */
+  warnBelow?: number
+  /** Below this the bar turns red. */
+  dangerBelow?: number
+  /** Force a tone instead of deriving it from the thresholds. */
+  tone?: Tone
+}
+
+/**
+ * A level bar in the style of a control-room analog indicator: gray while the
+ * value is in its normal range, with tick marks showing where the warning and
+ * danger bands begin, so the operator sees how close a value is to trouble.
+ */
+export function Meter({ value, label, warnBelow, dangerBelow, tone }: MeterProps) {
+  const derived: Tone =
+    dangerBelow !== undefined && value < dangerBelow
+      ? 'danger'
+      : warnBelow !== undefined && value < warnBelow
+        ? 'warn'
+        : 'neutral'
+  const clamped = Math.max(0, Math.min(100, value))
   return (
     <div
       className={styles.meter}
-      data-tone={tone ?? auto}
+      data-tone={tone ?? derived}
       role="meter"
       aria-label={label}
       aria-valuenow={Math.round(value)}
       aria-valuemin={0}
       aria-valuemax={100}
     >
-      <div className={styles.meterFill} style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
+      <div className={styles.meterFill} style={{ width: `${clamped}%` }} />
+      {[warnBelow, dangerBelow].map(
+        (t) => t !== undefined && <span key={t} className={styles.meterTick} style={{ left: `${t}%` }} />,
+      )}
     </div>
   )
 }
 
-export function Badge({ tone = 'neutral', pulse, children }: { tone?: Tone; pulse?: boolean; children: ReactNode }) {
+/** A short status word with its signal glyph. `blink` is for unacknowledged alarms only. */
+export function Badge({ tone = 'neutral', blink, children }: { tone?: Tone; blink?: boolean; children: ReactNode }) {
   return (
-    <span className={cx(styles.badge, pulse && styles.pulse)} data-tone={tone}>
+    <span className={cx(styles.badge, blink && styles.blink)} data-tone={tone}>
+      <Glyph tone={tone} />
       {children}
     </span>
   )
@@ -95,12 +152,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button({ variant = 'default', icon, block, className, children, ...rest }: ButtonProps) {
   return (
-    <button
-      type="button"
-      className={cx(styles.button, styles[variant], block && styles.block, className)}
-      {...rest}
-    >
-      {icon && <Icon name={icon} size={18} />}
+    <button type="button" className={cx(styles.button, styles[variant], block && styles.block, className)} {...rest}>
+      {icon && <Icon name={icon} size={16} />}
       {children}
     </button>
   )

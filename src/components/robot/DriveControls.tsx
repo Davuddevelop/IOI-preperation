@@ -42,9 +42,7 @@ export function DriveControls() {
             {interlock ? (
               <Badge tone="warn">{interlock}</Badge>
             ) : obstacleStop ? (
-              <Badge tone="danger" pulse>
-                Safety stop — obstacle ahead
-              </Badge>
+              <Badge tone="danger">Safety stop: obstacle ahead</Badge>
             ) : mode === 'manual' ? (
               <>
                 <span className={styles.touchHint}>Drag the stick to drive.</span>
@@ -59,9 +57,8 @@ export function DriveControls() {
         <div className={styles.group}>
           <span className="label">Drone bay</span>
           <div className={styles.bay}>
-            <Badge tone={lid === 'closed' ? 'neutral' : 'drone'}>Lid {LID_LABEL[lid]}</Badge>
+            <span className={styles.lid}>Lid {LID_LABEL[lid].toLowerCase()}</span>
             <Button
-              icon="bay"
               disabled={!lidMovable}
               onClick={() => send({ type: 'robot/setLid', open: !lidOpening })}
             >

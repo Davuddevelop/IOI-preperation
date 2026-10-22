@@ -6,7 +6,7 @@ The operator console for MINOTAUR GUARDIAN, team Batzilla's reconnaissance robot
 
 The console runs in any modern browser, on phones, tablets and computers.
 
-> **This is a demonstration build.** The app does not talk to a robot. Positions, sensor readings, drone flights and aerial threats come from a built-in simulator, and the console says so (the **SIM** badge in the top bar). Aerial drone detection is marked *Experimental* because it is a development direction of the project, not a finished feature.
+> **This is a demonstration build.** The app does not talk to a robot. Positions, sensor readings, drone flights and aerial threats come from a built-in simulator, and the console says so (the **Sim** button in the top bar). Aerial drone detection is marked *Experimental* because it is a development direction of the project, not a finished feature.
 
 ## Screens
 
@@ -40,7 +40,19 @@ npm run dev -- --host  # also reachable from a phone or tablet on the same Wi-Fi
 
 `dist/` is plain static files with no backend and no internet access needed at runtime, so any static host works. On a tablet, "Add to Home Screen" opens it full-screen like an app.
 
-The **SIM** badge in the top bar has speed (×1 to ×8), pause and restart: useful when presenting.
+The **Sim** button in the top bar has speed (×1 to ×8), pause and restart: useful when presenting.
+
+## Design language
+
+The look follows control-room practice rather than app-store fashion. The rules live in `src/styles/tokens.css`; keep to them when adding screens.
+
+1. **Gray is normal.** A screen where everything is fine has almost no colour. This follows the ISA-101 "high-performance HMI" approach used in industrial control rooms: if normal states are colourful, a real alarm has to compete with them.
+2. **Three signal colours, each with one meaning:** blue = ours (robot, drone), amber = needs attention, red = danger. Nothing is coloured for decoration.
+3. **Colour always comes with a shape**, borrowed from military map symbology: our units are circles or chevrons, hostile aircraft are diamonds, unidentified ones are open squares, metal contacts and warnings are triangles. The display still reads in grayscale and for colour-blind operators.
+4. **Flat.** 1px hairlines, 4px corners. No gradients, glows, blur, drop shadows or glossy controls.
+5. **One type family.** IBM Plex Sans for text, IBM Plex Mono for numbers that update live (fixed-width digits do not jitter). Bundled with the app, so it works offline. Sentence case, no letter-spaced capitals.
+6. **Motion only means "unacknowledged danger".** Nothing pulses for decoration; the airspace strip blinks only while a critical alert waits for the operator.
+7. **No boxes in boxes.** Lists are rows separated by hairlines; stats sit in hairline tables (`StatGrid`), not cards inside panels.
 
 ## How it is built
 
@@ -80,7 +92,7 @@ src/
 - **`useSyncExternalStore`** (`state/hooks.ts`): how React subscribes to data that lives outside React. Components select only what they show (`s => Math.round(s.robot.battery)`), so they re-render only when that changes.
 - **Canvas outside React** (`hooks/useCanvasLoop.ts`): the camera feeds and radar redraw every frame without re-rendering components.
 - **A 3D camera in 200 lines** (`components/feeds/groundView.ts`): project world points through a pinhole lens; dividing by distance creates perspective.
-- **One layout, three devices** (`App.module.css`, `screens/screens.module.css`): CSS grid areas rearranged at breakpoints, `display: contents` for column wrappers, container queries for the camera HUD.
+- **One layout, three devices** (`App.module.css`, `screens/screens.module.css`): CSS grid areas rearranged at breakpoints, `display: contents` for column wrappers, container queries for the camera HUD and stat tables. Note that a container query styles the *children* of a container, never the container itself — see `StatGrid` in `components/ui.tsx`.
 - **Safety by design**: a drive watchdog (the robot stops if commands stop arriving), lid interlocks during drone launch, and an airspace strip with a fixed height so alerts never shift buttons under the operator's finger.
 - **Deterministic simulation** (`simulator/random.ts`): a seeded random generator makes every run the same, which is why the tests can assert exact behaviour.
 

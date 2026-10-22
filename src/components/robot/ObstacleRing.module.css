@@ -7,58 +7,69 @@
 .svg {
   flex: 1;
   min-width: 0;
-  max-width: 260px;
-  max-height: 260px;
+  max-width: 240px;
+  max-height: 240px;
   margin: 0 auto;
 }
 
 .ring {
   fill: none;
-  stroke: var(--border-strong);
-  stroke-dasharray: 2 3;
+  stroke: var(--line-strong);
 }
 
 .ringLabel {
-  fill: var(--text-faint);
+  fill: var(--text-3);
   font-family: var(--font-mono);
   font-size: 8px;
 }
 
 .stopRing {
-  fill: var(--danger-soft);
+  fill: none;
   stroke: var(--danger);
-  stroke-opacity: 0.5;
+  stroke-opacity: 0.6;
+  stroke-dasharray: 2 2;
 }
 
 .wedge {
-  fill: var(--tone);
-  fill-opacity: 0.18;
+  fill: var(--text-3);
+  fill-opacity: 0.12;
 }
 
 .edge {
   fill: none;
+  stroke: var(--text-3);
+  stroke-width: 2;
+}
+
+/* Close obstacles take their warning colour. */
+.sector[data-tone='warn'] .wedge,
+.sector[data-tone='danger'] .wedge {
+  fill: var(--tone);
+  fill-opacity: 0.18;
+}
+
+.sector[data-tone='warn'] .edge,
+.sector[data-tone='danger'] .edge {
   stroke: var(--tone);
-  stroke-width: 3;
-  stroke-linecap: round;
 }
 
 .clear .wedge {
-  fill-opacity: 0.05;
+  fill-opacity: 0.04;
 }
 
 .clear .edge {
-  stroke-opacity: 0.35;
+  stroke: var(--line-strong);
 }
 
 .robot rect {
-  fill: var(--surface-3);
-  stroke: var(--accent);
+  fill: var(--surface);
+  stroke: var(--friendly);
   stroke-width: 1.5;
 }
 
 .robot path {
   fill: none;
-  stroke: var(--accent);
+  stroke: var(--friendly);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -69,17 +80,22 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-3);
-  min-width: 96px;
+  min-width: 110px;
 }
 
 .readout p {
   font-size: var(--fs-2xl);
-  font-weight: 600;
-  line-height: 1.1;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.readout p[data-tone='warn'],
+.readout p[data-tone='danger'] {
   color: var(--tone);
 }
 
 .direction {
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
+  color: var(--text-2);
+  font-size: var(--fs-md);
 }

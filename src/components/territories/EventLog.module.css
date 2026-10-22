@@ -7,27 +7,45 @@
 .filters {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  align-items: center;
+  gap: var(--space-1);
 }
 
 .chip {
-  min-height: 34px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-pill);
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
   background: transparent;
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  color: var(--text-2);
+  font-size: var(--fs-md);
   cursor: pointer;
 }
 
-.chip[aria-pressed='true'] {
-  border-color: var(--tone, var(--accent));
-  background: var(--tone-soft, var(--accent-soft));
-  color: var(--tone, var(--accent));
+.chip:hover {
+  color: var(--text);
 }
 
+.chip[aria-pressed='true'] {
+  border-color: var(--line-strong);
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 var(--space-2);
+  background: var(--line-strong);
+}
+
+@media (pointer: coarse) {
+  .chip {
+    min-height: 36px;
+  }
+}
+
+/* A table in all but name: time, subsystem, message, state. */
 .log {
   margin: 0;
   padding: 0;
@@ -36,30 +54,26 @@
 
 .entry {
   display: grid;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-columns: auto 52px 1fr auto;
   align-items: baseline;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
-  border-left: 2px solid var(--tone);
-  font-size: var(--fs-sm);
+  padding: 6px 0;
+  font-size: var(--fs-md);
 }
 
 .entry + .entry {
-  border-top: 1px solid var(--border);
-}
-
-.entry[data-tone='neutral'] {
-  border-left-color: var(--border-strong);
+  border-top: 1px solid var(--line);
 }
 
 .entry time {
-  color: var(--text-faint);
-  font-size: var(--fs-xs);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
 }
 
-.icon {
-  align-self: center;
-  color: var(--tone);
+.category {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  text-transform: capitalize;
 }
 
 .message {
@@ -68,13 +82,19 @@
 }
 
 .entry[data-tone='neutral'] .message {
-  color: var(--text-muted);
+  color: var(--text-2);
 }
 
 .open {
   color: var(--tone);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 479px) {
+  .entry {
+    grid-template-columns: auto 1fr auto;
+  }
+  .category {
+    display: none;
+  }
 }

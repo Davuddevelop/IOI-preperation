@@ -1,4 +1,3 @@
-import { cx } from '../../lib/cx'
 import { DRONE_PHASE_LABEL, LID_LABEL } from '../../lib/format'
 import { useWorld } from '../../state/hooks'
 import styles from './BayDiagram.module.css'
@@ -35,7 +34,7 @@ export function BayDiagram() {
         <rect x={82} y={68} width={94} height={20} rx={2} className={styles.cavity} />
 
         {/* Drone, drawn before the lid so a closed lid covers it. */}
-        <g transform={`translate(129 ${droneY})`} className={cx(styles.drone, phase !== 'docked' && styles.spinning)}>
+        <g transform={`translate(129 ${droneY})`} className={styles.drone}>
           <line x1={-24} x2={24} y1={-3} y2={-3} />
           <rect x={-12} y={-4} width={24} height={8} rx={2} />
           <ellipse cx={-24} cy={-6} rx={10} ry={1.6} className={styles.rotor} />

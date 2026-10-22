@@ -1,60 +1,62 @@
 .list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.list li + li {
+  border-top: 1px solid var(--line);
+}
+
 .row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 12px auto 1fr auto;
   grid-template-areas:
-    'id class badge'
-    'id numbers badge';
+    'symbol id class threat'
+    'symbol id numbers threat';
   align-items: center;
   column-gap: var(--space-3);
   width: 100%;
   min-height: var(--tap);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--tone);
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
+  padding: var(--space-2) var(--space-2);
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
   text-align: left;
   cursor: pointer;
 }
 
 .row:hover {
-  background: var(--surface-3);
+  background: var(--surface-2);
 }
 
 .row[aria-pressed='true'] {
-  border-color: var(--tone);
-  background: var(--tone-soft);
+  background: var(--surface-3);
+}
+
+.row > svg {
+  grid-area: symbol;
 }
 
 .id {
   grid-area: id;
-  font-family: var(--font-mono);
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--tone);
+  font-size: var(--fs-base);
+  font-weight: 500;
 }
 
 .class {
   grid-area: class;
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  font-size: var(--fs-md);
 }
 
 .numbers {
   grid-area: numbers;
-  color: var(--text-muted);
-  font-size: var(--fs-xs);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
 }
 
-.row > :last-child {
-  grid-area: badge;
+.threat {
+  grid-area: threat;
+  color: var(--tone);
+  font-size: var(--fs-sm);
 }

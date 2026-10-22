@@ -1,66 +1,72 @@
 /*
- * Design tokens. Every colour, size and gap in the app comes from here, so the
- * look can be retuned in one place.
+ * Design tokens. Every colour, size and gap in the app comes from here.
  *
- * The console is dark on purpose: operators work outdoors and at night, and a
- * dark screen keeps their eyes adjusted to the field.
+ * The rules this palette enforces (from ISA-101 "high-performance HMI"
+ * practice for control rooms):
+ *
+ *   1. Gray is normal. A screen where everything is fine has almost no colour.
+ *   2. Colour is a signal, and there are only three:
+ *        blue  = ours (the robot, the drone)
+ *        amber = needs attention (warnings, metal contacts, medium threats)
+ *        red   = danger (critical alarms, hostile aircraft)
+ *   3. Colour is never the only cue: it is paired with a shape or a word, so
+ *      the display still reads in grayscale or to a colour-blind operator.
+ *   4. Flat: hairlines, small radii, no gradients, glows, blur or shadows.
+ *
+ * The console is dark because operators work outdoors and at night.
  *
  * Breakpoints (CSS custom properties cannot be used inside @media, so these
  * values are repeated in the component stylesheets):
  *   phone    < 640px   bottom tab bar, one column
- *   tablet   ≥ 640px   icon rail, mostly one column with paired panels
+ *   tablet   ≥ 640px   icon rail, panels paired side by side
  *   desktop  ≥ 1100px  labelled sidebar, main + side column layouts
  */
 :root {
   color-scheme: dark;
 
-  /* surfaces */
-  --bg: #070a09;
-  --surface: #0d1210;
-  --surface-2: #131a17;
-  --surface-3: #1a231f;
-  --border: #1f2b26;
-  --border-strong: #2d3d36;
+  /* neutrals: a true gray ramp, no tint */
+  --bg: #0f1011;
+  --surface: #151618;
+  --surface-2: #1b1c1f;
+  --surface-3: #25272a;
+  --line: #242528;
+  --line-strong: #36383c;
 
-  /* text */
-  --text: #dbe6e0;
-  --text-muted: #8b9c94;
-  --text-faint: #5d6d66;
+  --text: #e9e9e7;
+  --text-2: #a4a5a9;
+  --text-3: #808287;
 
-  /* meaning — each colour stands for one thing everywhere */
-  --accent: #4fe3a1; /* our robot, nominal state */
-  --accent-soft: rgb(79 227 161 / 0.14);
-  --drone: #5cc8ff; /* our drone */
-  --drone-soft: rgb(92 200 255 / 0.14);
-  --metal: #f2cf5b; /* metal contacts */
-  --metal-soft: rgb(242 207 91 / 0.15);
-  --warn: #ff9f43;
-  --warn-soft: rgb(255 159 67 / 0.15);
-  --danger: #ff5a5f;
-  --danger-soft: rgb(255 90 95 / 0.15);
-  --neutral-soft: rgb(139 156 148 / 0.14);
+  /* signals: the only colours in the app */
+  --friendly: #6aa9e9;
+  --friendly-soft: rgb(106 169 233 / 0.12);
+  --warn: #e8a33d;
+  --warn-soft: rgb(232 163 61 / 0.12);
+  --danger: #ef5f57;
+  --danger-soft: rgb(239 95 87 / 0.13);
 
-  /* map */
-  --map-bg: #0b120f;
-  --map-grid: #16231d;
-  --map-zone: rgb(219 230 224 / 0.04);
-  --map-road: #1f2522;
-  --map-stream: #17324a;
-  --obstacle-rock: #3b4742;
-  --obstacle-tree: #1f3b2b;
-  --obstacle-rubble: #4a4038;
+  /* map: terrain stays in near-grays so symbols carry the colour */
+  --map-bg: #121315;
+  --map-grid: #1c1d20;
+  --map-zone-line: #3a3c40;
+  --map-road: #1a1b1e;
+  --map-stream: #1a222b;
+  --map-swept: rgb(233 233 231 / 0.07);
+  --obstacle-rock: #393b3e;
+  --obstacle-tree: #2b2f2c;
+  --obstacle-rubble: #3a3632;
 
-  /* type */
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', Menlo, Consolas, monospace;
-  --fs-xs: 0.6875rem;
-  --fs-sm: 0.8125rem;
-  --fs-md: 0.875rem;
-  --fs-lg: 1rem;
-  --fs-xl: 1.25rem;
-  --fs-2xl: 1.75rem;
+  /* type: one family, a strict scale */
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --fs-xs: 0.6875rem; /* 11 */
+  --fs-sm: 0.75rem; /* 12 */
+  --fs-md: 0.8125rem; /* 13 */
+  --fs-base: 0.875rem; /* 14 */
+  --fs-lg: 1rem; /* 16 */
+  --fs-xl: 1.25rem; /* 20 */
+  --fs-2xl: 1.75rem; /* 28 */
 
-  /* space */
+  /* space: a 4px grid */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -69,28 +75,19 @@
   --space-6: 32px;
   --gutter: var(--space-3);
 
-  /* shape */
-  --radius: 10px;
-  --radius-sm: 6px;
-  --radius-pill: 999px;
+  --radius: 4px;
 
   /* layout */
-  --top-h: 52px;
-  --rail-w: 76px;
-  --sidebar-w: 208px;
+  --top-h: 48px;
+  --rail-w: 72px;
+  --sidebar-w: 200px;
   --side-col: 340px;
   /* Minimum comfortable touch target. */
   --tap: 44px;
 }
 
-@media (min-width: 640px) {
-  :root {
-    --gutter: var(--space-4);
-  }
-}
-
 @media (min-width: 1100px) {
   :root {
-    --gutter: var(--space-5);
+    --gutter: var(--space-4);
   }
 }

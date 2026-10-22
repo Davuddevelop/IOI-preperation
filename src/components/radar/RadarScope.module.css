@@ -4,7 +4,7 @@
   aspect-ratio: 1;
   max-height: min(78vh, 760px);
   margin: 0 auto;
-  background: radial-gradient(circle, #08130e 0%, var(--surface) 70%);
+  background: var(--map-bg);
 }
 
 .canvas {

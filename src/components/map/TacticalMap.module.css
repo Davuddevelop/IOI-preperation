@@ -12,6 +12,7 @@
   height: 100%;
   /* Let the page scroll on touch; taps still reach the handlers. */
   touch-action: pan-y pinch-zoom;
+  font-family: var(--font-sans);
 }
 
 .pickable {
@@ -25,7 +26,9 @@
 .droneLink,
 .zone rect,
 .scale path,
-.goal {
+.goal,
+.air line,
+.base rect {
   vector-effect: non-scaling-stroke;
 }
 
@@ -35,7 +38,7 @@
 }
 
 .gridLabel {
-  fill: var(--text-faint);
+  fill: var(--text-3);
   font-family: var(--font-mono);
 }
 
@@ -48,12 +51,12 @@
 
 .road {
   stroke: var(--map-road);
-  stroke-width: 2.4;
+  stroke-width: 1.4;
 }
 
 .stream {
   stroke: var(--map-stream);
-  stroke-width: 1.8;
+  stroke-width: 1;
 }
 
 .rock {
@@ -66,11 +69,29 @@
   fill: var(--obstacle-rubble);
 }
 
+.trail {
+  fill: none;
+  stroke: var(--map-swept);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Zones: dashed until surveyed, solid after; the selected one in white. */
 .zone rect {
-  fill: var(--map-zone);
-  stroke: var(--border-strong);
+  fill: transparent;
+  stroke: var(--map-zone-line);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.surveying rect,
+.surveyed rect {
+  stroke-dasharray: none;
+}
+
+.zone.highlight rect {
+  stroke: var(--text);
   stroke-width: 1.5;
-  stroke-dasharray: 6 4;
 }
 
 .zone[role='button'] {
@@ -80,164 +101,132 @@
 
 .zone[role='button']:hover rect,
 .zone[role='button']:focus-visible rect {
-  stroke: var(--text-muted);
-}
-
-.surveying rect {
-  stroke: color-mix(in srgb, var(--accent) 60%, transparent);
-}
-
-.surveyed rect {
-  fill: rgb(79 227 161 / 0.05);
-  stroke-dasharray: none;
-}
-
-.zone.highlight rect {
-  stroke: var(--accent);
-  stroke-width: 2.5;
-  stroke-dasharray: none;
+  stroke: var(--text-2);
 }
 
 .zoneName {
-  fill: var(--text-muted);
-  font-weight: 650;
-  letter-spacing: 0.04em;
+  fill: var(--text-2);
 }
 
 .zoneCoverage {
-  fill: var(--accent);
+  fill: var(--text-3);
   font-family: var(--font-mono);
 }
 
-.trail {
-  fill: none;
-  stroke: var(--accent);
-  stroke-opacity: 0.16;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.contact path {
-  fill: var(--metal);
-  stroke: #1a1503;
-  stroke-width: 0.25;
-}
-
-.contact text {
-  fill: var(--metal);
-  font-family: var(--font-mono);
-}
-
-.base {
-  fill: var(--surface-3);
-  stroke: var(--text-muted);
-  stroke-width: 0.3;
-}
-
-.label {
-  fill: var(--text-muted);
-  font-weight: 650;
-  letter-spacing: 0.06em;
-}
-
-.radarRange {
-  fill: none;
-  stroke: var(--danger);
-  stroke-opacity: 0.25;
-  stroke-dasharray: 2 6;
-}
-
-.sensorRange {
-  fill: var(--accent);
-  fill-opacity: 0.05;
-  stroke: var(--accent);
-  stroke-opacity: 0.25;
-}
-
-.robotHalo {
-  fill: var(--accent);
-  fill-opacity: 0.18;
-  stroke: var(--accent);
-  stroke-width: 0.25;
-}
+/* Symbols. Blue = ours; amber and red only for what needs attention. */
 
 .robot {
-  fill: var(--accent);
-  stroke: #04130c;
+  fill: var(--friendly);
+  stroke: var(--map-bg);
   stroke-width: 0.3;
   stroke-linejoin: round;
-}
-
-.droneLink {
-  stroke: var(--drone);
-  stroke-opacity: 0.6;
-  stroke-dasharray: 4 4;
-}
-
-.drone path {
-  stroke: var(--drone);
-  stroke-width: 0.45;
 }
 
 .drone circle {
   fill: none;
-  stroke: var(--drone);
-  stroke-width: 0.35;
+  stroke: var(--friendly);
+  stroke-width: 0.4;
 }
 
-.droneText {
-  fill: var(--drone);
+.drone text {
+  fill: var(--friendly);
   font-family: var(--font-mono);
+}
+
+.droneLink {
+  stroke: var(--friendly);
+  stroke-opacity: 0.45;
+  stroke-dasharray: 3 3;
 }
 
 .goal {
   fill: none;
-  stroke: var(--drone);
+  stroke: var(--friendly);
   stroke-width: 1.5;
 }
 
-.air path {
-  fill: var(--text-muted);
-  stroke: #000;
-  stroke-width: 0.25;
-}
-
-.air text {
-  fill: var(--text-muted);
-  font-family: var(--font-mono);
-  font-weight: 650;
-}
-
-.air[data-threat='medium'] path,
-.air[data-threat='medium'] text {
+.contact path {
   fill: var(--warn);
 }
 
-.air[data-threat='high'] path,
-.air[data-threat='high'] text {
-  fill: var(--danger);
+.contact text {
+  fill: var(--warn);
+  font-family: var(--font-mono);
+}
+
+.air {
+  --air: var(--text-2);
+}
+.air[data-threat='medium'] {
+  --air: var(--warn);
+}
+.air[data-threat='high'] {
+  --air: var(--danger);
+}
+
+.air path {
+  fill: var(--air);
+}
+
+/* Unidentified: an open outline, because we do not know what it is yet. */
+.air[data-shape='unknown'] path {
+  fill: var(--map-bg);
+  stroke: var(--air);
+  stroke-width: 0.4;
+}
+
+.air line {
+  stroke: var(--air);
+  stroke-width: 1;
+}
+
+.air text {
+  fill: var(--air);
+  font-family: var(--font-mono);
+}
+
+.base rect {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 1;
+}
+
+.base text {
+  fill: var(--text-3);
+}
+
+.radarRange {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-opacity: 0.35;
+  stroke-dasharray: 2 5;
+}
+
+.sensorRange {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-opacity: 0.5;
 }
 
 .scale path {
   fill: none;
-  stroke: var(--text-muted);
-  stroke-width: 1.5;
+  stroke: var(--text-3);
+  stroke-width: 1;
 }
 
 .scale text {
-  fill: var(--text-muted);
+  fill: var(--text-3);
   font-family: var(--font-mono);
   dominant-baseline: middle;
 }
 
+/* Bottom-right is the emptiest corner of the map, so the toggle hides nothing important. */
 .controls {
-  /* Bottom-right is the emptiest corner of the map, so the toggle hides nothing important. */
   position: absolute;
   bottom: var(--space-2);
   right: var(--space-2);
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
-  border-radius: var(--radius-sm);
-  backdrop-filter: blur(4px);
+  background: var(--surface);
+  border-radius: var(--radius);
 }
 
 /* --------------------------------------------------------------- legend */
@@ -249,9 +238,9 @@
   margin: 0;
   padding: var(--space-2) var(--space-3);
   list-style: none;
-  border-top: 1px solid var(--border);
-  color: var(--text-muted);
-  font-size: var(--fs-xs);
+  border-top: 1px solid var(--line);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
 }
 
 .legend li {
@@ -262,36 +251,29 @@
 
 .legend li::before {
   content: '';
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
+  width: 9px;
+  height: 9px;
 }
 
 .legend [data-kind='robot']::before {
-  background: var(--accent);
+  background: var(--friendly);
   clip-path: polygon(50% 0, 100% 100%, 50% 70%, 0 100%);
 }
 .legend [data-kind='drone']::before {
-  border: 2px solid var(--drone);
+  border: 1.5px solid var(--friendly);
   border-radius: 50%;
 }
 .legend [data-kind='metal']::before {
-  background: var(--metal);
+  background: var(--warn);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.legend [data-kind='hostile']::before {
+  background: var(--danger);
   transform: rotate(45deg) scale(0.8);
 }
-.legend [data-kind='air']::before {
-  background: var(--danger);
-  clip-path: polygon(50% 0, 100% 100%, 50% 70%, 0 100%);
+.legend [data-kind='unknown']::before {
+  border: 1.5px solid var(--text-2);
 }
 .legend [data-kind='swept']::before {
-  background: rgb(79 227 161 / 0.25);
-}
-.legend [data-kind='radar']::before {
-  height: 0;
-  border-top: 2px dashed color-mix(in srgb, var(--danger) 60%, transparent);
-  border-radius: 0;
-}
-.legend [data-kind='obstacle']::before {
-  background: var(--obstacle-rock);
-  border-radius: 50%;
+  background: rgb(233 233 231 / 0.18);
 }

@@ -22,22 +22,16 @@ export function MetalDetector() {
       <div className={styles.top}>
         <div>
           <span className="label">Signal</span>
-          <p className={`mono ${styles.value}`} data-tone={hit ? 'metal' : undefined}>
+          <p className={`mono ${styles.value}`} data-tone={hit ? 'warn' : undefined}>
             {Math.round(signal * 100)}
             <span>%</span>
           </p>
         </div>
-        {hit ? (
-          <Badge tone="metal" pulse>
-            Metal detected
-          </Badge>
-        ) : (
-          <Badge>Scanning</Badge>
-        )}
+        {hit ? <Badge tone="warn">Metal detected</Badge> : <Badge>Scanning</Badge>}
       </div>
 
       <div className={styles.bar} role="meter" aria-label="Metal detector signal" aria-valuenow={Math.round(signal * 100)} aria-valuemin={0} aria-valuemax={100}>
-        <div className={styles.fill} data-tone={hit ? 'metal' : 'accent'} style={{ width: `${signal * 100}%` }} />
+        <div className={styles.fill} data-tone={hit ? 'warn' : 'neutral'} style={{ width: `${signal * 100}%` }} />
         <div className={styles.threshold} style={{ left: `${threshold * 100}%` }} title="Detection threshold" />
       </div>
 
@@ -45,9 +39,7 @@ export function MetalDetector() {
         <line x1={0} x2={100} y1={40 - threshold * 38} y2={40 - threshold * 38} className={styles.traceThreshold} />
         <polyline points={points} className={styles.traceLine} />
       </svg>
-      <p className={styles.caption}>
-        Last 15 s · dashed line = {Math.round(threshold * 100)}% detection threshold
-      </p>
+      <p className={styles.caption}>Last 15 seconds. Dashed line: {Math.round(threshold * 100)}% detection threshold.</p>
 
       <div className={styles.footer}>
         <div>

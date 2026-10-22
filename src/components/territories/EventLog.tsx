@@ -2,9 +2,7 @@ import { useMemo, useState } from 'react'
 import type { EventCategory, Severity } from '../../data/types'
 import { formatClock } from '../../lib/format'
 import { useWorld } from '../../state/hooks'
-import { CATEGORY_ICON } from '../categoryIcons'
-import { Icon } from '../Icon'
-import { EmptyState, type Tone } from '../ui'
+import { EmptyState, Glyph, type Tone } from '../ui'
 import styles from './EventLog.module.css'
 
 const CATEGORIES: { value: EventCategory | 'all'; label: string }[] = [
@@ -46,10 +44,10 @@ export function EventLog() {
             {c.label}
           </button>
         ))}
+        <span className={styles.divider} />
         <button
           type="button"
           className={styles.chip}
-          data-tone="warn"
           aria-pressed={alertsOnly}
           onClick={() => setAlertsOnly((v) => !v)}
         >
@@ -66,8 +64,9 @@ export function EventLog() {
               <time className="mono" dateTime={new Date(e.time).toISOString()}>
                 {formatClock(e.time)}
               </time>
-              <Icon name={CATEGORY_ICON[e.category]} size={16} className={styles.icon} />
+              <span className={styles.category}>{e.category}</span>
               <span className={styles.message}>
+                <Glyph tone={SEVERITY_TONE[e.severity]} />
                 <span className="visually-hidden">{e.severity}: </span>
                 {e.message}
               </span>

@@ -1,3 +1,28 @@
+/* ---------------------------------------------------------------- glyph */
+
+.glyph {
+  display: inline-block;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  background: var(--tone);
+  vertical-align: 0.1em;
+}
+
+.glyph[data-tone='friendly'] {
+  border-radius: 50%;
+}
+
+.glyph[data-tone='warn'] {
+  width: 8px;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.glyph[data-tone='danger'] {
+  transform: rotate(45deg) scale(0.85);
+}
+
 /* ---------------------------------------------------------------- panel */
 
 .panel {
@@ -6,7 +31,7 @@
   min-width: 0;
   min-height: 0;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -14,26 +39,24 @@
 .panelHeader {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  min-height: 44px;
-  padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid var(--border);
-}
-
-.panelIcon {
-  color: var(--text-muted);
-  flex: none;
+  gap: var(--space-3);
+  min-height: 40px;
+  padding: var(--space-1) var(--space-3);
+  border-bottom: 1px solid var(--line);
 }
 
 .panelTitle {
-  font-size: var(--fs-xs);
-  font-weight: 650;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  font-size: var(--fs-md);
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.panelTag {
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
 }
 
 .panelActions {
@@ -63,42 +86,102 @@
 }
 
 .statValue {
+  display: flex;
+  align-items: baseline;
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--tone, var(--text));
-  line-height: 1.2;
+  line-height: 1.25;
   white-space: nowrap;
+}
+
+/* Normal values stay white; only abnormal ones take a colour. */
+.stat[data-tone='neutral'] .statValue {
+  color: var(--text);
+}
+
+.statValue .glyph {
+  align-self: center;
 }
 
 .statUnit {
   margin-left: 3px;
+  font-family: var(--font-sans);
   font-size: var(--fs-sm);
-  font-weight: 500;
-  color: var(--text-muted);
+  font-weight: 400;
+  color: var(--text-3);
 }
 
 .statHint {
-  font-size: var(--fs-xs);
-  color: var(--text-faint);
+  font-size: var(--fs-sm);
+  color: var(--text-3);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* ------------------------------------------------------------ stat grid */
+
+.statGridWrap {
+  container-type: inline-size;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+}
+
+.statGrid[data-columns='3'] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.statCell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px var(--space-3);
+  background: var(--surface);
+}
+
+.statCell .statValue {
+  font-size: var(--fs-lg);
+}
+
+@container (min-width: 560px) {
+  .statGrid[data-columns='2'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 /* ---------------------------------------------------------------- meter */
 
 .meter {
-  height: 6px;
-  border-radius: var(--radius-pill);
+  position: relative;
+  height: 4px;
   background: var(--surface-3);
-  overflow: hidden;
 }
 
 .meterFill {
   height: 100%;
-  border-radius: inherit;
+  background: var(--text-3);
+  transition: width 0.3s linear;
+}
+
+.meter[data-tone='warn'] .meterFill,
+.meter[data-tone='danger'] .meterFill,
+.meter[data-tone='friendly'] .meterFill {
   background: var(--tone);
-  transition: width 0.3s ease;
+}
+
+.meterTick {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 1px;
+  background: var(--text-3);
 }
 
 /* ---------------------------------------------------------------- badge */
@@ -106,20 +189,14 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: var(--radius-pill);
-  background: var(--tone-soft);
   color: var(--tone);
-  font-size: var(--fs-xs);
-  font-weight: 650;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: var(--fs-sm);
+  font-weight: 500;
   white-space: nowrap;
 }
 
-.pulse {
-  animation: pulse 1.2s ease-in-out infinite;
+.blink {
+  animation: blink 1s steps(1) infinite;
 }
 
 /* --------------------------------------------------------------- button */
@@ -129,49 +206,50 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: transparent;
   font-size: var(--fs-md);
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
   white-space: nowrap;
+  transition: background 0.12s;
 }
 
 .button:hover:not(:disabled) {
-  background: var(--surface-3);
+  background: var(--surface-2);
 }
 
 .button:disabled {
-  opacity: 0.4;
+  color: var(--text-3);
+  border-color: var(--line);
   cursor: not-allowed;
 }
 
 .primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #04130c;
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
 }
 
 .primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 85%, white);
+  background: #ffffff;
+}
+
+.primary:disabled {
+  background: transparent;
 }
 
 .danger {
-  background: var(--danger-soft);
-  border-color: color-mix(in srgb, var(--danger) 50%, transparent);
+  border-color: var(--danger);
   color: var(--danger);
 }
 
 .ghost {
-  background: transparent;
   border-color: transparent;
-  color: var(--text-muted);
+  color: var(--text-2);
 }
 
 .ghost:hover:not(:disabled) {
@@ -186,49 +264,62 @@
 
 .segmented {
   display: flex;
-  padding: 3px;
-  gap: 3px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  padding: 2px;
+  gap: 2px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
 }
 
 .segmented button {
   flex: 1;
-  min-height: 38px;
+  min-height: 32px;
   padding: 0 var(--space-3);
   border: 0;
-  border-radius: 4px;
+  border-radius: 2px;
   background: transparent;
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  color: var(--text-2);
+  font-size: var(--fs-md);
   cursor: pointer;
   white-space: nowrap;
 }
 
-.segmented button[aria-pressed='true'] {
-  background: var(--surface-3);
-  color: var(--accent);
-  box-shadow: inset 0 0 0 1px var(--border-strong);
+.segmented button:hover:not(:disabled) {
+  color: var(--text);
 }
 
-.small button {
-  min-height: 30px;
-  padding: 0 var(--space-2);
-  font-size: var(--fs-xs);
+.segmented button[aria-pressed='true'] {
+  background: var(--surface-3);
+  color: var(--text);
 }
 
 .segmented button:disabled {
-  opacity: 0.4;
+  color: var(--text-3);
   cursor: not-allowed;
+}
+
+.small button {
+  min-height: 26px;
+  padding: 0 var(--space-2);
+  font-size: var(--fs-sm);
+}
+
+/* Fingers need bigger targets than mouse pointers. */
+@media (pointer: coarse) {
+  .button {
+    min-height: var(--tap);
+  }
+  .segmented button {
+    min-height: 40px;
+  }
+  .small button {
+    min-height: 32px;
+  }
 }
 
 /* ----------------------------------------------------------------- misc */
 
 .empty {
-  padding: var(--space-5) var(--space-3);
-  text-align: center;
-  color: var(--text-faint);
-  font-size: var(--fs-sm);
+  padding: var(--space-4) 0;
+  color: var(--text-3);
+  font-size: var(--fs-md);
 }

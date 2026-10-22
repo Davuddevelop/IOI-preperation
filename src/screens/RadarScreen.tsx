@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { RadarScope } from '../components/radar/RadarScope'
 import { TargetDetail } from '../components/radar/TargetDetail'
 import { TargetList } from '../components/radar/TargetList'
-import { Badge, Panel } from '../components/ui'
+import { Panel } from '../components/ui'
 import { RADAR } from '../data/specs'
 import { useWorld } from '../state/hooks'
 import styles from './screens.module.css'
@@ -18,23 +18,22 @@ export function RadarScreen() {
       <div className={styles.mainColumn}>
         <Panel
           title="Air surveillance"
-          icon="radar"
           flush
           className={styles.feed}
-          tag={<Badge tone="drone">Experimental</Badge>}
+          tag="Experimental"
         >
           <RadarScope selectedId={selected?.id ?? null} onSelect={setSelectedId} />
           <p className={styles.caption}>
-            Range {RADAR.range} m · red ring {RADAR.highThreatRange} m alert radius · <span data-tone="drone">◆</span> our
-            drone · tap a target to inspect
+            Range {RADAR.range} m. Dashed ring: {RADAR.highThreatRange} m alert radius. Diamond: hostile, open square:
+            unidentified, circle: our drone. Tap a target to inspect it.
           </p>
         </Panel>
       </div>
       <div className={styles.sideColumn}>
-        <Panel title="Selected target" icon="crosshair" className={styles.detail}>
+        <Panel title="Selected target" flush className={styles.detail}>
           <TargetDetail target={selected} />
         </Panel>
-        <Panel title={`Tracked contacts (${targets.length})`} icon="alert" className={styles.list}>
+        <Panel title={`Tracked contacts (${targets.length})`} className={styles.list}>
           <TargetList selectedId={selected?.id ?? null} onSelect={setSelectedId} />
         </Panel>
       </div>

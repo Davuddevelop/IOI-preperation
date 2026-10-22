@@ -13,3 +13,9 @@ export function useAirThreats() {
   const targets = useWorld((s) => s.airTargets)
   return useMemo(() => targets.filter((t) => t.threat === 'high' || t.threat === 'medium'), [targets])
 }
+
+/** True while a critical alert is waiting for the operator: the only time anything blinks. */
+export function useUnacknowledgedCritical() {
+  const events = useWorld((s) => s.events)
+  return useMemo(() => events.some((e) => e.severity === 'critical' && !e.acknowledged), [events])
+}

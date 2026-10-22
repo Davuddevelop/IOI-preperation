@@ -15,7 +15,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
-  font-size: var(--fs-md);
+  font-size: var(--fs-base);
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
@@ -40,7 +40,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--friendly);
   outline-offset: 2px;
 }
 
@@ -50,12 +50,10 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
+/* Small secondary text naming a value. Sentence case, no letter-spacing. */
 .label {
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
 }
 
 .visually-hidden {
@@ -72,17 +70,18 @@ a {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: var(--line-strong);
   border: 3px solid var(--bg);
-  border-radius: var(--radius-pill);
+  border-radius: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-@keyframes pulse {
+/* Reserved for alarms the operator has not acknowledged yet. */
+@keyframes blink {
   50% {
-    opacity: 0.35;
+    opacity: 0.3;
   }
 }
 
@@ -96,18 +95,14 @@ a {
   }
 }
 
-/* Tone roles: a component sets data-tone="…" and reads var(--tone) / var(--tone-soft). */
-[data-tone='accent'] {
-  --tone: var(--accent);
-  --tone-soft: var(--accent-soft);
+/* Signal roles: a component sets data-tone="…" and reads var(--tone) / var(--tone-soft). */
+[data-tone='neutral'] {
+  --tone: var(--text-2);
+  --tone-soft: var(--surface-2);
 }
-[data-tone='drone'] {
-  --tone: var(--drone);
-  --tone-soft: var(--drone-soft);
-}
-[data-tone='metal'] {
-  --tone: var(--metal);
-  --tone-soft: var(--metal-soft);
+[data-tone='friendly'] {
+  --tone: var(--friendly);
+  --tone-soft: var(--friendly-soft);
 }
 [data-tone='warn'] {
   --tone: var(--warn);
@@ -116,8 +111,4 @@ a {
 [data-tone='danger'] {
   --tone: var(--danger);
   --tone-soft: var(--danger-soft);
-}
-[data-tone='neutral'] {
-  --tone: var(--text-muted);
-  --tone-soft: var(--neutral-soft);
 }

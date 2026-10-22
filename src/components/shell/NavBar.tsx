@@ -15,11 +15,10 @@ export function NavBar({ current }: { current: Route }) {
   return (
     <nav className={styles.nav} aria-label="Main">
       <div className={styles.brand}>
-        <Logo size={30} />
+        <Logo size={26} />
         <span className={styles.brandName}>
-          MINOTAUR
-          <br />
-          <span>GUARDIAN</span>
+          Minotaur
+          <span>Guardian</span>
         </span>
       </div>
       <ul className={styles.list}>
@@ -33,7 +32,7 @@ export function NavBar({ current }: { current: Route }) {
                 aria-current={current === item.route ? 'page' : undefined}
               >
                 <span className={styles.iconWrap}>
-                  <Icon name={item.icon} size={22} />
+                  <Icon name={item.icon} size={20} />
                   {count > 0 && (
                     <span className={styles.count} data-tone={item.route === 'radar' ? 'danger' : 'warn'}>
                       {count > 9 ? '9+' : count}
@@ -50,7 +49,7 @@ export function NavBar({ current }: { current: Route }) {
       <p className={styles.footer}>
         Team Batzilla
         <br />
-        Prototype console v0.1
+        Prototype console 0.1
       </p>
     </nav>
   )

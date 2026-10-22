@@ -1,8 +1,9 @@
 import { RADAR } from '../../data/specs'
 import { CLASS_LABEL, formatBearing, formatMeters } from '../../lib/format'
 import { href, type Route } from '../../router'
+import { useUnacknowledgedCritical } from '../../state/derived'
 import { useWorld } from '../../state/hooks'
-import { Icon } from '../Icon'
+import { Glyph, type Tone } from '../ui'
 import styles from './AirspaceStrip.module.css'
 
 /**
@@ -14,25 +15,26 @@ import styles from './AirspaceStrip.module.css'
  */
 export function AirspaceStrip({ route }: { route: Route }) {
   const targets = useWorld((s) => s.airTargets)
+  const unacknowledged = useUnacknowledgedCritical()
   // Sorted most dangerous first.
   const top = targets[0]
-  const tone = !top ? 'neutral' : top.threat === 'high' ? 'danger' : top.threat === 'medium' ? 'warn' : 'neutral'
+  const tone: Tone = top?.threat === 'high' ? 'danger' : top?.threat === 'medium' ? 'warn' : 'neutral'
 
   return (
-    <div className={styles.strip} data-tone={tone}>
-      <Icon name={top?.threat === 'high' ? 'alert' : 'radar'} size={18} className={styles.icon} />
+    <div className={styles.strip} data-tone={tone} data-blink={tone === 'danger' && unacknowledged ? '' : undefined}>
+      <Glyph tone={tone} />
       <p className={styles.text}>
         {!top ? (
           <>
             <strong>Airspace clear</strong>
-            <span>Radar active · {RADAR.range} m</span>
+            <span>Radar scanning {RADAR.range} m</span>
           </>
         ) : (
           <>
             <strong>
               {top.threat === 'high' ? 'High air threat' : `${targets.length} air contact${targets.length > 1 ? 's' : ''}`}
-              {' — '}
-              {top.label} {CLASS_LABEL[top.classification]}
+              {' · '}
+              {top.label} {CLASS_LABEL[top.classification].toLowerCase()}
             </strong>
             <span className="mono">
               {formatMeters(top.distance)} · {formatBearing(top.bearing)} · alt {Math.round(top.altitude)} m
@@ -42,7 +44,7 @@ export function AirspaceStrip({ route }: { route: Route }) {
       </p>
       {top && route !== 'radar' && (
         <a className={styles.link} href={href('radar')}>
-          Radar
+          Open radar
         </a>
       )}
       {/* Screen readers hear about high threats once per target, not on every distance update. */}

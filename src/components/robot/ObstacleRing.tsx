@@ -25,7 +25,8 @@ const point = (deg: number, r: number) => {
   return `${(r * Math.sin(a)).toFixed(2)} ${(-r * Math.cos(a)).toFixed(2)}`
 }
 
-const toneFor = (d: number): Tone => (d < 1.5 ? 'danger' : d < 3 ? 'warn' : 'accent')
+// Gray while clear; colour only as something gets close.
+const toneFor = (d: number): Tone => (d < ROBOT.stopDistance + 0.5 ? 'danger' : d < 2.5 ? 'warn' : 'neutral')
 
 /**
  * The proximity sensors seen from above, robot's front pointing up. Each wedge
@@ -51,7 +52,7 @@ export function ObstacleRing() {
           <g key={m}>
             <circle r={(R * m) / range} className={styles.ring} />
             <text x={3} y={(-R * m) / range + 9} className={styles.ringLabel}>
-              {m} m
+              {m}
             </text>
           </g>
         ))}
@@ -78,17 +79,13 @@ export function ObstacleRing() {
 
       <div className={styles.readout}>
         <div>
-          <span className="label">Nearest</span>
+          <span className="label">Nearest obstacle</span>
           <p className="mono" data-tone={toneFor(nearestDistance)}>
             {nearestDistance >= range ? `> ${range} m` : formatMeters(nearestDistance)}
           </p>
           <span className={styles.direction}>{nearestDistance >= range ? 'all clear' : SECTOR_NAMES[nearest]}</span>
         </div>
-        {stop && (
-          <Badge tone="danger" pulse>
-            Safety stop
-          </Badge>
-        )}
+        {stop && <Badge tone="danger">Safety stop</Badge>}
       </div>
     </div>
   )

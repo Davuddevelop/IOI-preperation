@@ -39,6 +39,11 @@
   }
 }
 
+.lid {
+  color: var(--text-2);
+  font-size: var(--fs-md);
+}
+
 .bay {
   display: flex;
   align-items: center;

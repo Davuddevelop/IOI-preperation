@@ -28,9 +28,7 @@ export function RobotFeed({ compact }: FeedProps) {
     <div className={cx(styles.feed, nightVision && styles.nightVision, compact && styles.compact)}>
       <canvas ref={canvasRef} className={styles.canvas} role="img" aria-label="Simulated front camera view from the robot" />
       <div className={styles.hud} aria-hidden="true">
-        <span className={styles.topLeft}>
-          <span className={styles.rec} /> CAM-1 FRONT
-        </span>
+        <span className={styles.topLeft}>CAM 1 · Front</span>
         <FeedClock className={styles.topRight} />
         <Crosshair />
         <span className={styles.bottomLeft}>
@@ -38,8 +36,8 @@ export function RobotFeed({ compact }: FeedProps) {
         </span>
         {!compact && <HeadingTape heading={heading} />}
         <span className={styles.alerts}>
-          {obstacleStop && <span data-tone="danger">OBSTACLE STOP</span>}
-          {metal && <span data-tone="metal">METAL</span>}
+          {obstacleStop && <span data-tone="danger">Obstacle stop</span>}
+          {metal && <span data-tone="warn">Metal</span>}
         </span>
       </div>
       {!compact && (
@@ -69,26 +67,17 @@ export function DroneFeed({ compact }: FeedProps) {
     <div className={cx(styles.feed, compact && styles.compact)}>
       <canvas ref={canvasRef} className={styles.canvas} role="img" aria-label="Simulated downward camera view from the drone" />
       <div className={styles.hud} aria-hidden="true">
-        <span className={styles.topLeft}>
-          {phase !== 'docked' && <span className={styles.rec} />} CAM-2 AERIAL
-        </span>
+        <span className={styles.topLeft}>CAM 2 · Aerial</span>
         <FeedClock className={styles.topRight} />
         {phase === 'docked' ? (
-          <span className={styles.standby}>
-            Drone docked
-            <br />
-            feed on standby
-          </span>
+          <span className={styles.standby}>Drone docked — feed on standby</span>
         ) : (
           <>
             <Crosshair />
             <span className={styles.bottomLeft}>
-              ALT {altitude} m · {speed} m/s · BAT {battery}%
+              {DRONE_PHASE_LABEL[phase]} · alt {altitude} m · {speed} m/s · bat {battery}%
             </span>
             {!compact && <HeadingTape heading={heading} />}
-            <span className={styles.alerts}>
-              <span data-tone="drone">{DRONE_PHASE_LABEL[phase].toUpperCase()}</span>
-            </span>
           </>
         )}
       </div>
@@ -104,7 +93,8 @@ function FeedClock({ className }: { className: string }) {
 function Crosshair() {
   return (
     <svg className={styles.crosshair} viewBox="-20 -20 40 40">
-      <path d="M-14 -8v-6h6 M8 -14h6v6 M14 8v6h-6 M-8 14h-6v-6 M-4 0h-4 M4 0h4 M0 -4v-4 M0 4v4" />
+      <path d="M-12 0h-6 M12 0h6 M0 -12v-6 M0 12v6" />
+      <circle r={1.2} />
     </svg>
   )
 }
@@ -122,7 +112,7 @@ function HeadingTape({ heading }: { heading: number }) {
     const deg = wrap360(d)
     ticks.push(
       <g key={d}>
-        <line x1={x} x2={x} y1={major ? 9 : 13} y2={17} />
+        <line x1={x} x2={x} y1={major ? 10 : 13} y2={17} />
         {d % 30 === 0 && (
           <text x={x} y={6} textAnchor="middle">
             {CARDINAL_TICKS[deg] ?? deg}
@@ -134,7 +124,7 @@ function HeadingTape({ heading }: { heading: number }) {
   return (
     <svg className={styles.tape} viewBox={`0 -4 ${width} 36`}>
       {ticks}
-      <path d={`M${width / 2 - 5} 26 L${width / 2} 20 L${width / 2 + 5} 26`} className={styles.tapeMarker} />
+      <path d={`M${width / 2} 19 v6`} className={styles.tapeMarker} />
       <text x={width / 2} y={32} textAnchor="middle" className={styles.tapeValue}>
         {String(heading % 360).padStart(3, '0')}
       </text>

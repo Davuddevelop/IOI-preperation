@@ -15,18 +15,17 @@ export function OverviewScreen() {
 
   return (
     <div className={styles.overview}>
-      <Panel title="Tactical map" icon="territories" flush className={styles.map} bodyClassName={styles.mapBody}>
+      <Panel title="Tactical map" flush className={styles.map} bodyClassName={styles.mapBody}>
         <TacticalMap className={styles.mapCanvas} />
         <MapLegend />
       </Panel>
 
-      <Panel title="System status" icon="overview" className={styles.status}>
+      <Panel title="System status" flush className={styles.status}>
         <StatusSummary />
       </Panel>
 
       <Panel
         title="Live feed"
-        icon="eye"
         flush
         className={styles.feeds}
         actions={
@@ -46,14 +45,13 @@ export function OverviewScreen() {
 
       <Panel
         title="Alerts"
-        icon="alert"
         className={styles.alerts}
         bodyClassName={styles.scrollBody}
         tag={openAlerts > 0 && <Badge tone="warn">{openAlerts} open</Badge>}
         actions={
           openAlerts > 0 && (
             <Button variant="ghost" icon="check" onClick={() => send({ type: 'events/acknowledge', id: 'all' })}>
-              All
+              Acknowledge all
             </Button>
           )
         }

@@ -24,20 +24,19 @@ export function TerritoriesScreen() {
     <div className={styles.territories}>
       <Panel
         title="Sectors"
-        icon="territories"
+        flush
         className={styles.zones}
-        tag={<span className={styles.caption}>{percent(coverage)} of all sectors swept</span>}
+        tag={`${percent(coverage)} swept`}
       >
         <ZoneList selectedId={selectedId ?? activeZone} onSelect={setSelectedId} />
       </Panel>
 
-      <Panel title="Sector map" icon="overview" flush className={styles.map} bodyClassName={styles.mapBody}>
+      <Panel title="Sector map" flush className={styles.map} bodyClassName={styles.mapBody}>
         <TacticalMap className={styles.mapCanvas} highlightZoneId={selectedId ?? activeZone} onSelectZone={setSelectedId} />
       </Panel>
 
       <Panel
         title="Mission log"
-        icon="alert"
         className={styles.log}
         bodyClassName={styles.logBody}
         actions={

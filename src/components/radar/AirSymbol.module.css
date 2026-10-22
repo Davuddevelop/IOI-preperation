@@ -1,0 +1,24 @@
+.symbol {
+  --air: var(--text-2);
+  flex: none;
+  width: 12px;
+  height: 12px;
+  overflow: visible;
+}
+
+.symbol[data-threat='medium'] {
+  --air: var(--warn);
+}
+.symbol[data-threat='high'] {
+  --air: var(--danger);
+}
+
+.symbol path {
+  fill: var(--air);
+}
+
+.symbol[data-shape='unknown'] path {
+  fill: none;
+  stroke: var(--air);
+  stroke-width: 0.45;
+}

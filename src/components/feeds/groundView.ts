@@ -108,36 +108,37 @@ export function renderGroundView(ctx: CanvasRenderingContext2D, snap: WorldSnaps
   for (const { o, s } of visible) {
     const r = o.radius * s.scale
     if (s.x + r * 2 < 0 || s.x - r * 2 > w) continue
-    drawObstacle(ctx, o, s, clamp(s.z / MAX_DISTANCE, 0, 1) * 0.85)
+    // Light haze only: heavy fog turns distant trees into pale discs that read as a moon.
+    drawObstacle(ctx, o, s, clamp(s.z / MAX_DISTANCE, 0, 1) * 0.5)
   }
 
   // Augmented-reality markers over registered metal contacts.
-  ctx.font = `600 ${clamp(w / 55, 10, 13)}px ui-monospace, monospace`
+  ctx.font = `500 ${clamp(w / 55, 10, 12)}px 'IBM Plex Mono', ui-monospace, monospace`
   ctx.textAlign = 'center'
   for (const c of contacts) {
     const ground = project(c.pos)
     const top = project(c.pos, 0.7)
     if (!ground || !top || ground.z > 25) continue
-    const size = clamp(0.18 * ground.scale, 4, 14)
-    ctx.strokeStyle = 'rgba(242,207,91,0.9)'
-    ctx.lineWidth = 1.5
+    // Same caution triangle as on the map.
+    const size = clamp(0.16 * ground.scale, 4, 12)
+    ctx.strokeStyle = 'rgba(232,163,61,0.9)'
+    ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo(ground.x, ground.y)
     ctx.lineTo(top.x, top.y)
     ctx.stroke()
-    ctx.fillStyle = '#f2cf5b'
+    ctx.fillStyle = '#e8a33d'
     ctx.beginPath()
     ctx.moveTo(top.x, top.y - size)
-    ctx.lineTo(top.x + size, top.y)
-    ctx.lineTo(top.x, top.y + size)
-    ctx.lineTo(top.x - size, top.y)
+    ctx.lineTo(top.x + size, top.y + size * 0.75)
+    ctx.lineTo(top.x - size, top.y + size * 0.75)
     ctx.closePath()
     ctx.fill()
     ctx.fillText(`${c.label} ${distance(robot.pos, c.pos).toFixed(1)}m`, top.x, top.y - size - 5)
   }
 
-  drawGrain(ctx, w, h, 0.14)
-  drawVignette(ctx, w, h)
+  drawGrain(ctx, w, h, 0.1)
+  drawVignette(ctx, w, h, 0.35)
 }
 
 function drawObstacle(
@@ -150,7 +151,7 @@ function drawObstacle(
   ctx.beginPath()
   if (o.kind === 'tree') {
     ctx.fillStyle = mix([46, 38, 28], FOG, fog)
-    ctx.fillRect(s.x - 0.13 * m, s.y - 2.4 * m, 0.26 * m, 2.4 * m)
+    ctx.fillRect(s.x - 0.15 * m, s.y - 2.4 * m, 0.3 * m, 2.4 * m)
     ctx.fillStyle = mix([34, 62, 40], FOG, fog)
     ctx.arc(s.x, s.y - 3.1 * m, o.radius * 1.4 * m, 0, Math.PI * 2)
     ctx.fill()

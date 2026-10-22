@@ -1,11 +1,12 @@
 import { memo, useMemo, useRef, useState, type PointerEvent } from 'react'
-import { clamp } from '../../data/geometry'
+import { clamp, headingVector } from '../../data/geometry'
 import { OBSTACLE_SENSOR, RADAR, SURVEY } from '../../data/specs'
 import type { AirTarget, MetalContact, Rect, Vec2, WorldMap, Zone } from '../../data/types'
 import { cx } from '../../lib/cx'
 import { percent } from '../../lib/format'
 import { useWorld } from '../../state/hooks'
 import { Segmented } from '../ui'
+import { AIR_PATHS, CONTACT_PATH, ROBOT_PATH, airShape } from './symbols'
 import styles from './TacticalMap.module.css'
 
 /** Margin around the world in the full view, metres. */
@@ -72,20 +73,18 @@ export function TacticalMap({ className, highlightZoneId, onSelectZone, onPick }
         <rect x={-PAD} y={-PAD} width={map.width + 2 * PAD} height={map.height + 2 * PAD} fill="var(--map-bg)" />
         <Grid map={map} view={view} k={k} />
         <Terrain map={map} />
-        <Zones zones={zones} k={k} highlightId={highlightZoneId ?? null} onSelect={onSelectZone} />
         <Trail points={robot.trail} />
+        <Zones zones={zones} k={k} highlightId={highlightZoneId ?? null} onSelect={onSelectZone} />
         <Obstacles map={map} />
         <Contacts contacts={contacts} k={k} showLabels={mode === 'follow'} />
 
-        {/* base */}
-        <g transform={`translate(${map.base.x} ${map.base.y}) scale(${k})`}>
-          <rect x={-1.6} y={-1.6} width={3.2} height={3.2} rx={0.4} className={styles.base} />
-          <text y={4.2} className={styles.label} textAnchor="middle" fontSize={1.9}>
-            BASE
+        <g transform={`translate(${map.base.x} ${map.base.y}) scale(${k})`} className={styles.base}>
+          <rect x={-1.4} y={-1.4} width={2.8} height={2.8} />
+          <text y={4} textAnchor="middle" fontSize={1.8}>
+            Base
           </text>
         </g>
 
-        {/* sensor footprints around the robot */}
         <circle cx={robot.pos.x} cy={robot.pos.y} r={RADAR.range} className={styles.radarRange} />
         <circle cx={robot.pos.x} cy={robot.pos.y} r={OBSTACLE_SENSOR.range} className={styles.sensorRange} />
 
@@ -94,15 +93,13 @@ export function TacticalMap({ className, highlightZoneId, onSelectZone, onPick }
             <line x1={robot.pos.x} y1={robot.pos.y} x2={drone.pos.x} y2={drone.pos.y} className={styles.droneLink} />
             {drone.goal && (
               <g transform={`translate(${drone.goal.x} ${drone.goal.y}) scale(${k})`} className={styles.goal}>
-                <circle r={2.2} />
-                <path d="M-3.4 0h2 M1.4 0h2 M0 -3.4v2 M0 1.4v2" />
+                <path d="M-2.4 0h1.6 M0.8 0h1.6 M0 -2.4v1.6 M0 0.8v1.6" />
               </g>
             )}
             <g transform={`translate(${drone.pos.x} ${drone.pos.y}) scale(${k})`} className={styles.drone}>
-              <path d="M-1.4 -1.4 1.4 1.4 M1.4 -1.4 -1.4 1.4" />
-              {[-1.4, 1.4].map((x) => [-1.4, 1.4].map((y) => <circle key={`${x}${y}`} cx={x} cy={y} r={0.9} />))}
-              <text x={2.6} y={-1.4} fontSize={1.8} className={styles.droneText}>
-                S-1 · {Math.round(drone.altitude)} m
+              <circle r={1.3} />
+              <text x={2.2} y={0.6} fontSize={1.7}>
+                S-1 {Math.round(drone.altitude)}m
               </text>
             </g>
           </>
@@ -113,8 +110,7 @@ export function TacticalMap({ className, highlightZoneId, onSelectZone, onPick }
         ))}
 
         <g transform={`translate(${robot.pos.x} ${robot.pos.y}) scale(${k})`}>
-          <circle r={2.8} className={styles.robotHalo} />
-          <path transform={`rotate(${robot.heading})`} d="M0 -2.2 1.6 1.6 0 0.7 -1.6 1.6z" className={styles.robot} />
+          <path transform={`rotate(${robot.heading})`} d={ROBOT_PATH} className={styles.robot} />
         </g>
 
         <ScaleBar view={view} k={k} />
@@ -173,14 +169,14 @@ function Grid({ map, view, k }: { map: WorldMap; view: Rect; k: number }) {
       {xs
         .filter((x) => x % (step * 2) === 0 && x > view.x && x < view.x + view.w)
         .map((x) => (
-          <text key={`lx${x}`} x={x + 0.6 * k} y={view.y + 2.4 * k} fontSize={1.6 * k} className={styles.gridLabel}>
+          <text key={`lx${x}`} x={x + 0.6 * k} y={view.y + 2.4 * k} fontSize={1.5 * k} className={styles.gridLabel}>
             {x}
           </text>
         ))}
       {ys
         .filter((y) => y % (step * 2) === 0 && y > view.y + 3 * k && y < view.y + view.h)
         .map((y) => (
-          <text key={`ly${y}`} x={view.x + 0.6 * k} y={y - 0.6 * k} fontSize={1.6 * k} className={styles.gridLabel}>
+          <text key={`ly${y}`} x={view.x + 0.6 * k} y={y - 0.6 * k} fontSize={1.5 * k} className={styles.gridLabel}>
             {y}
           </text>
         ))}
@@ -245,14 +241,14 @@ function Zones({ zones, k, highlightId, onSelect }: ZonesProps) {
             },
           })}
         >
-          <rect x={z.rect.x} y={z.rect.y} width={z.rect.w} height={z.rect.h} rx={0.6} />
-          <text x={z.rect.x + 1.2 * k} y={z.rect.y + 2.8 * k} fontSize={2 * k} className={styles.zoneName}>
-            {z.id} · {z.description}
+          <rect x={z.rect.x} y={z.rect.y} width={z.rect.w} height={z.rect.h} />
+          <text x={z.rect.x + 1 * k} y={z.rect.y + 2.6 * k} fontSize={1.8 * k} className={styles.zoneName}>
+            {z.id} {z.description}
           </text>
           <text
-            x={z.rect.x + z.rect.w - 1.2 * k}
-            y={z.rect.y + 2.8 * k}
-            fontSize={1.8 * k}
+            x={z.rect.x + z.rect.w - 1 * k}
+            y={z.rect.y + 2.6 * k}
+            fontSize={1.6 * k}
             textAnchor="end"
             className={styles.zoneCoverage}
           >
@@ -269,9 +265,9 @@ function Contacts({ contacts, k, showLabels }: { contacts: MetalContact[]; k: nu
     <g>
       {contacts.map((c) => (
         <g key={c.id} transform={`translate(${c.pos.x} ${c.pos.y}) scale(${k})`} className={styles.contact}>
-          <path d="M0 -1.3 1.3 0 0 1.3 -1.3 0z" />
+          <path d={CONTACT_PATH} />
           {showLabels && (
-            <text x={1.8} y={0.6} fontSize={1.6}>
+            <text x={1.8} y={0.6} fontSize={1.5}>
               {c.label}
             </text>
           )}
@@ -282,10 +278,19 @@ function Contacts({ contacts, k, showLabels }: { contacts: MetalContact[]; k: nu
 }
 
 function AirMarker({ target, k }: { target: AirTarget; k: number }) {
+  const shape = airShape(target)
+  // A short line shows where it is heading.
+  const v = headingVector(target.heading)
   return (
-    <g transform={`translate(${target.pos.x} ${target.pos.y}) scale(${k})`} className={styles.air} data-threat={target.threat}>
-      <path transform={`rotate(${target.heading})`} d="M0 -1.9 1.5 1.4 0 0.6 -1.5 1.4z" />
-      <text x={2.2} y={0.7} fontSize={1.8}>
+    <g
+      transform={`translate(${target.pos.x} ${target.pos.y}) scale(${k})`}
+      className={styles.air}
+      data-threat={target.threat}
+      data-shape={shape}
+    >
+      <line x1={v.x * 1.6} y1={v.y * 1.6} x2={v.x * 4} y2={v.y * 4} />
+      <path d={AIR_PATHS[shape]} />
+      <text x={2.2} y={0.6} fontSize={1.7}>
         {target.label}
       </text>
     </g>
@@ -299,7 +304,7 @@ function ScaleBar({ view, k }: { view: Rect; k: number }) {
   return (
     <g className={styles.scale}>
       <path d={`M${x} ${y - 0.8 * k}V${y}H${x + length}V${y - 0.8 * k}`} />
-      <text x={x + length + 1 * k} y={y} fontSize={1.6 * k}>
+      <text x={x + length + 1 * k} y={y} fontSize={1.5 * k}>
         {length} m
       </text>
     </g>
@@ -312,10 +317,9 @@ export function MapLegend() {
       <li data-kind="robot">Robot</li>
       <li data-kind="drone">Drone</li>
       <li data-kind="metal">Metal contact</li>
-      <li data-kind="air">Air target</li>
+      <li data-kind="hostile">Hostile air</li>
+      <li data-kind="unknown">Unidentified air</li>
       <li data-kind="swept">Swept area</li>
-      <li data-kind="obstacle">Obstacle</li>
-      <li data-kind="radar">Radar range</li>
     </ul>
   )
 }

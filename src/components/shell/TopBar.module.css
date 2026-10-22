@@ -2,12 +2,12 @@
   grid-area: top;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   min-width: 0;
   padding: 0 var(--gutter);
   padding-top: env(safe-area-inset-top);
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--line);
 }
 
 .brand {
@@ -18,66 +18,49 @@
 }
 
 .brandName {
-  font-size: var(--fs-sm);
-  font-weight: 750;
-  letter-spacing: 0.12em;
-  white-space: nowrap;
-}
-
-.brandName span {
-  color: var(--text-muted);
+  font-size: var(--fs-base);
   font-weight: 600;
 }
 
 .title {
   display: none;
-  font-size: var(--fs-lg);
-  font-weight: 600;
+  font-size: var(--fs-base);
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.status {
+.readouts {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-left: auto;
-  flex: none;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin: 0 0 0 auto;
+  font-size: var(--fs-md);
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--tone, var(--text-muted));
-  font-size: var(--fs-sm);
+.readouts div {
+  display: flex;
+  gap: 6px;
 }
 
-.threat {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 28px;
-  padding: 0 10px;
-  border-radius: var(--radius-pill);
-  background: var(--tone-soft);
-  color: var(--tone);
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  text-decoration: none;
-  animation: pulse 1.4s ease-in-out infinite;
+.readouts dt {
+  color: var(--text-3);
+}
+
+.readouts dd {
+  margin: 0;
+  color: var(--tone, var(--text));
 }
 
 @media (max-width: 419px) {
-  .brandName span,
-  .chip[data-hide='narrow'] {
+  .readouts [data-hide='narrow'] {
     display: none;
   }
 }
 
 @media (max-width: 639px) {
-  .chip[data-hide='phone'] {
+  .readouts [data-hide='phone'] {
     display: none;
   }
 }

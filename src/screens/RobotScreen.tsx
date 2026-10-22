@@ -10,21 +10,21 @@ export function RobotScreen() {
   return (
     <div className={`${styles.columns} ${styles.robotLayout}`}>
       <div className={styles.mainColumn}>
-        <Panel title="Front camera" icon="eye" flush className={styles.feed}>
+        <Panel title="Front camera" flush className={styles.feed}>
           <RobotFeed />
         </Panel>
-        <Panel title="Drive" icon="robot" className={styles.control}>
+        <Panel title="Drive" className={styles.control}>
           <DriveControls />
         </Panel>
-        <Panel title="Telemetry" icon="signal" className={styles.telemetry}>
+        <Panel title="Telemetry" flush className={styles.telemetry}>
           <RobotTelemetry />
         </Panel>
       </div>
       <div className={styles.sideColumn}>
-        <Panel title="Obstacle sensors" icon="crosshair" className={styles.sensors}>
+        <Panel title="Obstacle sensors" className={styles.sensors}>
           <ObstacleRing />
         </Panel>
-        <Panel title="Metal detector" icon="metal" className={styles.metal}>
+        <Panel title="Metal detector" className={styles.metal}>
           <MetalDetector />
         </Panel>
       </div>

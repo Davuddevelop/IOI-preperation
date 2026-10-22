@@ -1,32 +1,29 @@
 .controls {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
 }
 
 .status {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: 24px;
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--space-3) 0;
+  font-size: var(--fs-md);
+}
+
+.status strong {
+  font-size: var(--fs-lg);
+  font-weight: 500;
+}
+
+.status p {
+  color: var(--text-2);
 }
 
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-2);
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: var(--space-4) var(--space-3);
-}
-
-.withMeter {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--line);
 }

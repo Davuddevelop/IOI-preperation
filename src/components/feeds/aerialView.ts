@@ -70,7 +70,7 @@ export function renderAerialView(ctx: CanvasRenderingContext2D, snap: WorldSnaps
 
   // Overlay: the strip the metal detector has already swept.
   if (robot.trail.length > 1) {
-    ctx.strokeStyle = 'rgba(79,227,161,0.14)'
+    ctx.strokeStyle = 'rgba(233,233,231,0.12)'
     ctx.lineWidth = SURVEY.swath
     ctx.beginPath()
     robot.trail.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)))
@@ -93,7 +93,7 @@ export function renderAerialView(ctx: CanvasRenderingContext2D, snap: WorldSnaps
     const r = o.kind === 'tree' ? o.radius * 1.4 : o.radius
     const g = ctx.createRadialGradient(o.pos.x - r * 0.3, o.pos.y - r * 0.3, r * 0.1, o.pos.x, o.pos.y, r)
     const [light, dark] =
-      o.kind === 'tree' ? ['#46744b', '#1d3826'] : o.kind === 'rock' ? ['#878c83', '#474b45'] : ['#7c6a57', '#463a2f']
+      o.kind === 'tree' ? ['#3c5e40', '#22382a'] : o.kind === 'rock' ? ['#6b6f69', '#4c504a'] : ['#6c5d4e', '#4a3e33']
     g.addColorStop(0, light)
     g.addColorStop(1, dark)
     ctx.fillStyle = g
@@ -107,17 +107,17 @@ export function renderAerialView(ctx: CanvasRenderingContext2D, snap: WorldSnaps
 
   // Labels are drawn in screen space so text stays the same size at any altitude.
   const fontSize = clamp(w / 55, 10, 13)
-  ctx.font = `600 ${fontSize}px ui-monospace, monospace`
+  ctx.font = `500 ${fontSize}px 'IBM Plex Mono', ui-monospace, monospace`
   ctx.textAlign = 'left'
   for (const c of contacts) {
     const p = toScreen(c.pos)
     if (p.x < -20 || p.x > w + 20 || p.y < -20 || p.y > h + 20) continue
-    ctx.fillStyle = '#f2cf5b'
+    // Same caution triangle as on the map.
+    ctx.fillStyle = '#e8a33d'
     ctx.beginPath()
     ctx.moveTo(p.x, p.y - 6)
-    ctx.lineTo(p.x + 6, p.y)
-    ctx.lineTo(p.x, p.y + 6)
-    ctx.lineTo(p.x - 6, p.y)
+    ctx.lineTo(p.x + 6, p.y + 4.5)
+    ctx.lineTo(p.x - 6, p.y + 4.5)
     ctx.closePath()
     ctx.fill()
     ctx.fillText(c.label, p.x + 9, p.y + 4)
@@ -125,14 +125,14 @@ export function renderAerialView(ctx: CanvasRenderingContext2D, snap: WorldSnaps
 
   const rp = toScreen(robot.pos)
   const box = Math.max(14, 1.6 * s)
-  ctx.strokeStyle = '#4fe3a1'
-  ctx.lineWidth = 1.5
+  ctx.strokeStyle = '#6aa9e9'
+  ctx.lineWidth = 1
   corners(ctx, rp.x, rp.y, box)
-  ctx.fillStyle = '#4fe3a1'
-  ctx.fillText('MINOTAUR', rp.x + box + 4, rp.y - box + fontSize)
+  ctx.fillStyle = '#6aa9e9'
+  ctx.fillText('Minotaur', rp.x + box + 4, rp.y - box + fontSize)
 
-  drawGrain(ctx, w, h, 0.1)
-  drawVignette(ctx, w, h, 0.45)
+  drawGrain(ctx, w, h, 0.08)
+  drawVignette(ctx, w, h, 0.3)
 }
 
 function drawRobotFromAbove(ctx: CanvasRenderingContext2D, pos: Vec2, heading: number, lidOpen: number) {
