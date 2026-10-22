@@ -1,0 +1,60 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    'id class badge'
+    'id numbers badge';
+  align-items: center;
+  column-gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--tone);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:hover {
+  background: var(--surface-3);
+}
+
+.row[aria-pressed='true'] {
+  border-color: var(--tone);
+  background: var(--tone-soft);
+}
+
+.id {
+  grid-area: id;
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--tone);
+}
+
+.class {
+  grid-area: class;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.numbers {
+  grid-area: numbers;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+
+.row > :last-child {
+  grid-area: badge;
+}

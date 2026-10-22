@@ -1,0 +1,245 @@
+/*
+ * Screen layouts. Each screen is a CSS grid whose named areas are rearranged
+ * at the breakpoints, so the same panels serve phone, tablet and desktop:
+ * phones stack everything, tablets pair panels side by side, desktops use a
+ * main column plus a side column.
+ */
+
+/* Shared helpers */
+
+.scrollBody {
+  overflow-y: auto;
+}
+
+.mapBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.mapCanvas {
+  aspect-ratio: 124 / 84;
+}
+
+/* ------------------------------------------------------------ overview */
+
+.overview {
+  display: grid;
+  gap: var(--gutter);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'status'
+    'map'
+    'alerts'
+    'feeds';
+}
+
+.overview .map {
+  grid-area: map;
+}
+.overview .status {
+  grid-area: status;
+}
+.overview .feeds {
+  grid-area: feeds;
+}
+.overview .alerts {
+  grid-area: alerts;
+}
+
+.overview .alerts {
+  max-height: 420px;
+}
+
+@media (min-width: 640px) {
+  .overview {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'status status'
+      'map map'
+      'feeds alerts';
+  }
+
+  .overview .alerts {
+    max-height: none;
+  }
+}
+
+@media (min-width: 1100px) {
+  /* Fill the viewport: the map takes the height, alerts scroll inside their panel. */
+  .overview {
+    flex: 1;
+    min-height: 680px;
+    grid-template-columns: minmax(0, 1fr) var(--side-col);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      'map status'
+      'map feeds'
+      'map alerts';
+  }
+
+  .overview .mapCanvas {
+    flex: 1;
+    aspect-ratio: auto;
+  }
+}
+
+/* ---------------------------------------------------- two-column screens
+ * Robot, Drone and Radar have a main column and a side column on desktop.
+ * Below that, the column wrappers use `display: contents`: they vanish from
+ * layout and their panels join one grid, placed by named areas. Each screen
+ * lists only the areas it uses — an unused area would still add an empty row
+ * and its gap.
+ */
+
+.columns {
+  display: grid;
+  gap: var(--gutter);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mainColumn,
+.sideColumn {
+  display: contents;
+}
+
+.feed {
+  grid-area: feed;
+}
+.control {
+  grid-area: control;
+}
+.sensors {
+  grid-area: sensors;
+}
+.metal {
+  grid-area: metal;
+}
+.telemetry {
+  grid-area: telemetry;
+}
+.bay {
+  grid-area: bay;
+}
+.flightMap {
+  grid-area: map;
+}
+.detail {
+  grid-area: detail;
+}
+.list {
+  grid-area: list;
+}
+
+.robotLayout {
+  grid-template-areas: 'feed' 'control' 'sensors' 'metal' 'telemetry';
+}
+.droneLayout {
+  grid-template-areas: 'feed' 'control' 'bay' 'map';
+}
+.radarLayout {
+  grid-template-areas: 'feed' 'detail' 'list';
+}
+
+@media (min-width: 640px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .robotLayout {
+    grid-template-areas:
+      'feed feed'
+      'control control'
+      'sensors metal'
+      'telemetry telemetry';
+  }
+  .droneLayout {
+    grid-template-areas:
+      'feed feed'
+      'control bay'
+      'map map';
+  }
+  .radarLayout {
+    grid-template-areas:
+      'feed feed'
+      'detail list';
+  }
+}
+
+@media (min-width: 1100px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr) var(--side-col);
+    grid-template-areas: 'main side';
+    align-items: start;
+  }
+
+  .mainColumn,
+  .sideColumn {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gutter);
+    min-width: 0;
+  }
+
+  .mainColumn {
+    grid-area: main;
+  }
+
+  .sideColumn {
+    grid-area: side;
+  }
+}
+
+/* --------------------------------------------------------- territories */
+
+.territories {
+  display: grid;
+  gap: var(--gutter);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'zones' 'map' 'log';
+}
+
+.territories .zones {
+  grid-area: zones;
+}
+.territories .map {
+  grid-area: map;
+}
+.territories .log {
+  grid-area: log;
+}
+
+.logBody {
+  max-height: min(520px, 70vh);
+  overflow-y: auto;
+}
+
+@media (min-width: 1100px) {
+  .territories {
+    grid-template-columns: minmax(0, 1fr) var(--side-col);
+    grid-template-areas:
+      'map zones'
+      'log log';
+  }
+
+  /* The map grows to the height of the sector list beside it. */
+  .territories .mapCanvas {
+    flex: 1;
+    aspect-ratio: auto;
+  }
+}
+
+.caption {
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+
+.caption [data-tone] {
+  color: var(--tone);
+}
+
+/* In a panel header the caption sits beside the title. */
+:global(header) > .caption {
+  padding: 0;
+  margin-left: auto;
+  text-align: right;
+}

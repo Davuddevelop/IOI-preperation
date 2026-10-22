@@ -1,0 +1,297 @@
+.map {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  background: var(--map-bg);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Let the page scroll on touch; taps still reach the handlers. */
+  touch-action: pan-y pinch-zoom;
+}
+
+.pickable {
+  cursor: crosshair;
+}
+
+/* Thin lines stay 1px wide however far the map is zoomed. */
+.grid,
+.radarRange,
+.sensorRange,
+.droneLink,
+.zone rect,
+.scale path,
+.goal {
+  vector-effect: non-scaling-stroke;
+}
+
+.grid {
+  stroke: var(--map-grid);
+  stroke-width: 1;
+}
+
+.gridLabel {
+  fill: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+.road,
+.stream {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.road {
+  stroke: var(--map-road);
+  stroke-width: 2.4;
+}
+
+.stream {
+  stroke: var(--map-stream);
+  stroke-width: 1.8;
+}
+
+.rock {
+  fill: var(--obstacle-rock);
+}
+.tree {
+  fill: var(--obstacle-tree);
+}
+.rubble {
+  fill: var(--obstacle-rubble);
+}
+
+.zone rect {
+  fill: var(--map-zone);
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
+.zone[role='button'] {
+  cursor: pointer;
+  outline: none;
+}
+
+.zone[role='button']:hover rect,
+.zone[role='button']:focus-visible rect {
+  stroke: var(--text-muted);
+}
+
+.surveying rect {
+  stroke: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.surveyed rect {
+  fill: rgb(79 227 161 / 0.05);
+  stroke-dasharray: none;
+}
+
+.zone.highlight rect {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  stroke-dasharray: none;
+}
+
+.zoneName {
+  fill: var(--text-muted);
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+
+.zoneCoverage {
+  fill: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.trail {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: 0.16;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contact path {
+  fill: var(--metal);
+  stroke: #1a1503;
+  stroke-width: 0.25;
+}
+
+.contact text {
+  fill: var(--metal);
+  font-family: var(--font-mono);
+}
+
+.base {
+  fill: var(--surface-3);
+  stroke: var(--text-muted);
+  stroke-width: 0.3;
+}
+
+.label {
+  fill: var(--text-muted);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+}
+
+.radarRange {
+  fill: none;
+  stroke: var(--danger);
+  stroke-opacity: 0.25;
+  stroke-dasharray: 2 6;
+}
+
+.sensorRange {
+  fill: var(--accent);
+  fill-opacity: 0.05;
+  stroke: var(--accent);
+  stroke-opacity: 0.25;
+}
+
+.robotHalo {
+  fill: var(--accent);
+  fill-opacity: 0.18;
+  stroke: var(--accent);
+  stroke-width: 0.25;
+}
+
+.robot {
+  fill: var(--accent);
+  stroke: #04130c;
+  stroke-width: 0.3;
+  stroke-linejoin: round;
+}
+
+.droneLink {
+  stroke: var(--drone);
+  stroke-opacity: 0.6;
+  stroke-dasharray: 4 4;
+}
+
+.drone path {
+  stroke: var(--drone);
+  stroke-width: 0.45;
+}
+
+.drone circle {
+  fill: none;
+  stroke: var(--drone);
+  stroke-width: 0.35;
+}
+
+.droneText {
+  fill: var(--drone);
+  font-family: var(--font-mono);
+}
+
+.goal {
+  fill: none;
+  stroke: var(--drone);
+  stroke-width: 1.5;
+}
+
+.air path {
+  fill: var(--text-muted);
+  stroke: #000;
+  stroke-width: 0.25;
+}
+
+.air text {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 650;
+}
+
+.air[data-threat='medium'] path,
+.air[data-threat='medium'] text {
+  fill: var(--warn);
+}
+
+.air[data-threat='high'] path,
+.air[data-threat='high'] text {
+  fill: var(--danger);
+}
+
+.scale path {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+
+.scale text {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  dominant-baseline: middle;
+}
+
+.controls {
+  /* Bottom-right is the emptiest corner of the map, so the toggle hides nothing important. */
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-2);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(4px);
+}
+
+/* --------------------------------------------------------------- legend */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  list-style: none;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend li::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legend [data-kind='robot']::before {
+  background: var(--accent);
+  clip-path: polygon(50% 0, 100% 100%, 50% 70%, 0 100%);
+}
+.legend [data-kind='drone']::before {
+  border: 2px solid var(--drone);
+  border-radius: 50%;
+}
+.legend [data-kind='metal']::before {
+  background: var(--metal);
+  transform: rotate(45deg) scale(0.8);
+}
+.legend [data-kind='air']::before {
+  background: var(--danger);
+  clip-path: polygon(50% 0, 100% 100%, 50% 70%, 0 100%);
+}
+.legend [data-kind='swept']::before {
+  background: rgb(79 227 161 / 0.25);
+}
+.legend [data-kind='radar']::before {
+  height: 0;
+  border-top: 2px dashed color-mix(in srgb, var(--danger) 60%, transparent);
+  border-radius: 0;
+}
+.legend [data-kind='obstacle']::before {
+  background: var(--obstacle-rock);
+  border-radius: 50%;
+}

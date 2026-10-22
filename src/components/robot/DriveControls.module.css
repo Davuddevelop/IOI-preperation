@@ -1,0 +1,55 @@
+.drive {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  min-width: 0;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.hint {
+  min-height: 22px;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.keyHint {
+  display: none;
+}
+
+/* Devices with a mouse usually have a keyboard too. */
+@media (hover: hover) {
+  .keyHint {
+    display: inline;
+  }
+  .touchHint {
+    display: none;
+  }
+}
+
+.bay {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* Joystick beside the controls once there is room. */
+@media (min-width: 480px) {
+  .drive {
+    flex-direction: row;
+    align-items: center;
+  }
+}

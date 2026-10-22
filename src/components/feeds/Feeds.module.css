@@ -1,0 +1,177 @@
+.feed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+  /* HUD text sizes use cqw: a percentage of this box's width, so the overlay scales with the feed. */
+  container-type: inline-size;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.nightVision .canvas {
+  filter: grayscale(1) sepia(1) hue-rotate(65deg) saturate(3.5) brightness(1.2) contrast(1.15);
+}
+
+.nightVision::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.2) 0 1px, transparent 1px 3px);
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: rgb(226 255 240 / 0.92);
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 2cqw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.85);
+}
+
+.topLeft,
+.topRight,
+.bottomLeft,
+.alerts {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topLeft {
+  top: 3cqw;
+  left: 3cqw;
+}
+
+.topRight {
+  top: 3cqw;
+  right: 3cqw;
+}
+
+.bottomLeft {
+  bottom: 3cqw;
+  left: 3cqw;
+}
+
+.alerts {
+  top: calc(3cqw + 2.2em);
+  left: 3cqw;
+}
+
+.alerts span {
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--tone);
+  color: #0b0b0b;
+  text-shadow: none;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.rec {
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+  background: var(--danger);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(28px, 9cqw, 64px);
+  transform: translate(-50%, -50%);
+  fill: none;
+  stroke: rgb(226 255 240 / 0.75);
+  stroke-width: 1.5;
+}
+
+.tape {
+  position: absolute;
+  bottom: 2cqw;
+  left: 50%;
+  width: clamp(150px, 34cqw, 260px);
+  transform: translateX(-50%);
+  overflow: visible;
+}
+
+.tape line {
+  stroke: rgb(226 255 240 / 0.8);
+  stroke-width: 1.2;
+}
+
+.tape text {
+  fill: rgb(226 255 240 / 0.9);
+  font-size: 8px;
+}
+
+.tapeMarker {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.tape .tapeValue {
+  fill: var(--accent);
+  font-size: 9px;
+}
+
+.standby {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: clamp(11px, 2.6cqw, 15px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.toggle {
+  position: absolute;
+  right: 3cqw;
+  bottom: 3cqw;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgb(226 255 240 / 0.35);
+  border-radius: var(--radius-sm);
+  background: rgb(0 0 0 / 0.45);
+  color: rgb(226 255 240 / 0.9);
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.toggle[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Thumbnails show the picture with a lighter overlay. */
+.compact .alerts {
+  top: auto;
+  bottom: 3cqw;
+  left: auto;
+  right: 3cqw;
+}
+
+/* On narrow feeds there is no room for the heading tape beside the readouts. */
+@container (max-width: 520px) {
+  .tape {
+    display: none;
+  }
+}

@@ -1,0 +1,50 @@
+/*
+ * The app shell is a CSS grid whose areas move between breakpoints:
+ *
+ *   phone            tablet / desktop
+ *   ┌──────────┐     ┌────┬──────────┐
+ *   │   top    │     │    │   top    │
+ *   ├──────────┤     │nav ├──────────┤
+ *   │   main   │     │    │   main   │
+ *   ├──────────┤     │    │          │
+ *   │   nav    │     │    │          │
+ *   └──────────┘     └────┴──────────┘
+ */
+.shell {
+  display: grid;
+  height: 100dvh;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: calc(var(--top-h) + env(safe-area-inset-top)) minmax(0, 1fr) auto;
+  grid-template-areas:
+    'top'
+    'main'
+    'nav';
+}
+
+.main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+  min-height: 0;
+  padding: var(--gutter);
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+  overflow-y: auto;
+}
+
+@media (min-width: 640px) {
+  .shell {
+    grid-template-columns: var(--rail-w) minmax(0, 1fr);
+    grid-template-rows: calc(var(--top-h) + env(safe-area-inset-top)) minmax(0, 1fr);
+    grid-template-areas:
+      'nav top'
+      'nav main';
+  }
+}
+
+@media (min-width: 1100px) {
+  .shell {
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  }
+}

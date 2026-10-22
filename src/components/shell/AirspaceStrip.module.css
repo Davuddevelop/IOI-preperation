@@ -1,0 +1,88 @@
+.strip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: none;
+  /* A fixed height is the point: changing state never moves the content below. */
+  height: 44px;
+  padding: 0 var(--space-2) 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.strip[data-tone='warn'] {
+  border-color: color-mix(in srgb, var(--warn) 45%, transparent);
+  background: var(--warn-soft);
+}
+
+.strip[data-tone='danger'] {
+  border-color: color-mix(in srgb, var(--danger) 55%, transparent);
+  background: var(--danger-soft);
+}
+
+.icon {
+  flex: none;
+  color: var(--tone);
+}
+
+.strip[data-tone='danger'] .icon {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.text {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+
+.text strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--tone);
+  font-weight: 650;
+}
+
+.strip[data-tone='neutral'] .text strong {
+  color: var(--text);
+}
+
+.text span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-muted);
+}
+
+/* On narrow phones the details move off the strip; the radar screen has them. */
+@media (max-width: 479px) {
+  .text span {
+    display: none;
+  }
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  height: 32px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--tone);
+  color: #140606;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.strip[data-tone='neutral'] .link {
+  background: var(--surface-3);
+  color: var(--text);
+}
